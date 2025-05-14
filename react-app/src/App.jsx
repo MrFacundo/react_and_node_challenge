@@ -1,5 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
+import TaskForm from './components/TaskForm';
+import TaskList from './components/TaskList';
+import TaskListFooter from './components/TaskListFooter';
+import EditModal from './components/EditModal';
 
 function App() {
   const [task, setTask] = useState('');
@@ -95,61 +99,35 @@ function App() {
 
   return (
     <div className="app-container">
-      <div className="task-form">
-        <input
-          type="text"
-          placeholder="Write new task here..."
-          value={task}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyPress}
-        />
-        <button onClick={handleCreateTask}>Create</button>
-      </div>
+      <TaskForm
+        task={task}
+        onInputChange={handleInputChange}
+        onKeyPress={handleKeyPress}
+        onCreateTask={handleCreateTask}
+      />
 
-      {isEditModalOpen && (
-        <div className="modal-overlay" onClick={closeEditModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2>Edit Task</h2>
-            <textarea
-              ref={textareaRef}
-              type="text"
-              value={taskToEdit?.text || ''}
-              onChange={(e) => setTaskToEdit({ ...taskToEdit, text: e.target.value })}
-            />
-            <button onClick={handleEditTaskSave}>Save</button>
-            <button onClick={closeEditModal}>Cancel</button>
-          </div>
-        </div>
-      )}
+      <EditModal
+        isOpen={isEditModalOpen}
+        taskToEdit={taskToEdit}
+        onClose={closeEditModal}
+        onSave={handleEditTaskSave}
+        onTextChange={(e) => setTaskToEdit({ ...taskToEdit, text: e.target.value })}
+        textareaRef={textareaRef}
+      />
 
-      <div className="task-list">
-        <div className="task-list-header" onClick={toggleSortOrder}>
-          Tasks {sortOrder === 'asc' ? '↑' : sortOrder === 'desc' ? '↓' : ''}
-        </div>
-        {filteredTasks.map(task => (
-          <div key={task.id} className="task-item">
-            <input
-              type="checkbox"
-              checked={task.completed}
-              onChange={() => toggleTaskCompletion(task.id)}
-            />
-            <span>{task.text}</span>
-            <button onClick={() => openEditModal(task)}>Edit</button>
-            <button onClick={() => handleDeleteTask(task.id)}>Delete</button>
-          </div>
-        ))}
-      </div>
+      <TaskList
+        tasks={filteredTasks}
+        onToggleCompletion={toggleTaskCompletion}
+        onEditTask={openEditModal}
+        onDeleteTask={handleDeleteTask}
+        sortOrder={sortOrder}
+        onToggleSortOrder={toggleSortOrder}
+      />
 
-      <div className="task-list-footer">
-        <label>
-          <input
-            type="checkbox"
-            checked={hideCompleted}
-            onChange={toggleHideCompleted}
-          />
-          Hide completed
-        </label>
-      </div>
+      <TaskListFooter
+        hideCompleted={hideCompleted}
+        onToggleHideCompleted={toggleHideCompleted}
+      />
     </div>
   );
 }
