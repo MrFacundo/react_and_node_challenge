@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import TaskForm from './components/TaskForm';
 import TaskList from './components/TaskList';
@@ -12,8 +12,6 @@ function App() {
   const [sortOrder, setSortOrder] = useState('default');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState(null);
-
-  const textareaRef = useRef(null);
 
   const handleInputChange = (e) => {
     setTask(e.target.value);
@@ -43,7 +41,6 @@ function App() {
   const openEditModal = (task) => {
     setTaskToEdit(task);
     setIsEditModalOpen(true);
-    setTimeout(() => textareaRef.current?.focus(), 0);
   };
 
   const closeEditModal = () => {
@@ -95,7 +92,7 @@ function App() {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [closeEditModal]);
+  }, []);
 
   return (
     <div className="app-container">
@@ -112,7 +109,6 @@ function App() {
         onClose={closeEditModal}
         onSave={handleEditTaskSave}
         onTextChange={(e) => setTaskToEdit({ ...taskToEdit, text: e.target.value })}
-        textareaRef={textareaRef}
       />
 
       <TaskList
@@ -120,7 +116,6 @@ function App() {
         onToggleCompletion={toggleTaskCompletion}
         onEditTask={openEditModal}
         onDeleteTask={handleDeleteTask}
-        sortOrder={sortOrder}
         onToggleSortOrder={toggleSortOrder}
       />
 

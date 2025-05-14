@@ -10,7 +10,9 @@ const TaskForm = ({ task, onInputChange, onKeyPress, onCreateTask }) => {
         onChange={onInputChange}
         onKeyDown={onKeyPress}
       />
-      <button onClick={onCreateTask}>Create</button>
+      <button
+        disabled={!task.trim()}
+        onClick={onCreateTask}>Create</button>
     </div>
   );
 };

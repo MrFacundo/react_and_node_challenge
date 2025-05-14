@@ -1,3 +1,5 @@
+/* Common */
+
 #root {
 	display: flex;
 	justify-content: center;
@@ -5,6 +7,33 @@
 	height: 100vh;
 	width: 100%;
 	background-color: white;
+}
+
+button {
+	margin: 0 0.25rem;
+	padding: 0.5rem 1rem;
+	font-size: 1rem;
+	color: #000;
+	background-color: #fff;
+	border: 1px solid #000;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background-color 0.3s;
+}
+
+button:hover {
+	background-color: #f0f0f0;
+}
+
+button:disabled {
+	color: #666;
+	border: 1px solid #ccc;
+}
+
+textarea {
+	height: 200px;
+	width: 500px;
+	padding: 15px;
 }
 
 .app-container {
@@ -17,6 +46,8 @@
 	height: 800px;
 	width: 1050px;
 }
+
+/* Components */
 
 .task-form {
 	display: flex;
@@ -58,6 +89,10 @@
 	border-bottom: none;
 }
 
+.task-item > span.completed {
+	text-decoration: line-through;
+}
+
 .task-item input[type="checkbox"] {
 	margin-right: 0.5rem;
 }
@@ -65,24 +100,6 @@
 .task-item span {
 	flex: 1;
 	text-align: left;
-}
-
-.task-item button {
-	margin-left: 0.5rem;
-}
-
-button {
-	padding: 0.5rem 1rem;
-	font-size: 1rem;
-	color: #000;
-	background-color: #fff;
-	border: 1px solid #000;
-	border-radius: 4px;
-	cursor: pointer;
-}
-
-button:hover {
-	background-color: #f0f0f0;
 }
 
 .task-list-footer {
@@ -94,14 +111,12 @@ button:hover {
 	border-top: 1px solid #ddd;
 	padding-top: 1rem;
 	display: flex;
-	align-items: center;
 }
 
 .task-list-footer input[type="checkbox"] {
 	margin-right: 0.5rem;
 }
 
-/* Add styles for the modal and overlay */
 .modal-overlay {
 	position: fixed;
 	top: 0;
@@ -116,7 +131,7 @@ button:hover {
 	position: fixed;
 	top: 30%;
 	left: 50%;
-	transform: translate(-50%, -50%);
+	transform: translateX(-50%);
 	background-color: white;
 	padding: 20px;
 	z-index: 1000;
@@ -125,8 +140,60 @@ button:hover {
 	flex-direction: column;
 }
 
-textarea {
-	height: 200px;
-	width: 500px;
-	padding: 15px;
+.modal-overlay.fade-in {
+	animation: fadeIn 0.3s forwards;
+}
+
+.modal-overlay.fade-out {
+	animation: fadeOut 0.3s forwards;
+}
+
+.modal-content.slide-in {
+	animation: slideIn 0.3s forwards;
+}
+
+.modal-content.slide-out {
+	animation: slideOut 0.3s forwards;
+}
+
+/* Animations for modal overlay and modal content */
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes fadeOut {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes slideIn {
+	from {
+		transform: translate(-50%, -20px);
+		opacity: 0;
+	}
+	to {
+		transform: translate(-50%, 0);
+		opacity: 1;
+	}
+}
+
+@keyframes slideOut {
+	from {
+		transform: translate(-50%, 0);
+		opacity: 1;
+	}
+	to {
+		transform: translate(-50%, -20px);
+		opacity: 0;
+	}
 }
