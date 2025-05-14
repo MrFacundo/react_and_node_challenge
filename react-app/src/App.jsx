@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import TaskForm from './components/TaskForm';
 import TaskList from './components/TaskList';
@@ -12,14 +12,16 @@ function App() {
   const [sortOrder, setSortOrder] = useState('default');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState(null);
-
   const handleInputChange = (e) => {
     setTask(e.target.value);
   };
 
   const handleCreateTask = () => {
     if (task.trim()) {
-      setTasks([...tasks, { id: Date.now(), text: task, completed: false }]);
+      setTasks([
+        ...tasks,
+        { id: Date.now(), text: task, completed: false },
+      ]);
       setTask('');
     }
   };
@@ -31,15 +33,17 @@ function App() {
   };
 
   const toggleTaskCompletion = (id) => {
-    setTasks(tasks.map(task => task.id === id ? { ...task, completed: !task.completed } : task));
+    setTasks(
+      tasks.map((item) => (item.id === id ? { ...item, completed: !item.completed } : item)),
+    );
   };
 
   const handleDeleteTask = (id) => {
-    setTasks(tasks.filter(task => task.id !== id));
+    setTasks(tasks.filter((item) => item.id !== id));
   };
 
-  const openEditModal = (task) => {
-    setTaskToEdit(task);
+  const openEditModal = (item) => {
+    setTaskToEdit(item);
     setIsEditModalOpen(true);
   };
 
@@ -50,7 +54,11 @@ function App() {
 
   const handleEditTaskSave = () => {
     if (taskToEdit) {
-      setTasks(tasks.map(task => task.id === taskToEdit.id ? { ...task, text: taskToEdit.text } : task));
+      setTasks(
+        tasks.map((item) => (item.id === taskToEdit.id
+          ? { ...item, text: taskToEdit.text }
+          : item)),
+      );
       closeEditModal();
     }
   };
@@ -72,13 +80,16 @@ function App() {
   const sortedTasks = [...tasks].sort((a, b) => {
     if (sortOrder === 'asc') {
       return a.text.localeCompare(b.text);
-    } else if (sortOrder === 'desc') {
+    }
+    if (sortOrder === 'desc') {
       return b.text.localeCompare(a.text);
     }
     return 0;
   });
 
-  const filteredTasks = hideCompleted ? sortedTasks.filter(task => !task.completed) : sortedTasks;
+  const filteredTasks = hideCompleted
+    ? sortedTasks.filter((item) => !item.completed)
+    : sortedTasks;
 
   useEffect(() => {
     const handleKeyDown = (e) => {

@@ -1,10 +1,11 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 
-const TaskListFooter = ({ hideCompleted, onToggleHideCompleted }) => {
+function TaskListFooter({ hideCompleted, onToggleHideCompleted }) {
   return (
     <div className="task-list-footer">
-      <label>
+      <label htmlFor="hide-completed-checkbox">
         <input
+          id="hide-completed-checkbox"
           type="checkbox"
           checked={hideCompleted}
           onChange={onToggleHideCompleted}
@@ -13,6 +14,11 @@ const TaskListFooter = ({ hideCompleted, onToggleHideCompleted }) => {
       </label>
     </div>
   );
+}
+
+TaskListFooter.propTypes = {
+  hideCompleted: PropTypes.bool.isRequired,
+  onToggleHideCompleted: PropTypes.func.isRequired,
 };
 
 export default TaskListFooter;

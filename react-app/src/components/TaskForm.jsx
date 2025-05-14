@@ -1,6 +1,8 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 
-const TaskForm = ({ task, onInputChange, onKeyPress, onCreateTask }) => {
+function TaskForm({
+  task, onInputChange, onKeyPress, onCreateTask,
+}) {
   return (
     <div className="task-form">
       <input
@@ -11,10 +13,21 @@ const TaskForm = ({ task, onInputChange, onKeyPress, onCreateTask }) => {
         onKeyDown={onKeyPress}
       />
       <button
+        type="button"
         disabled={!task.trim()}
-        onClick={onCreateTask}>Create</button>
+        onClick={onCreateTask}
+      >
+        Create
+      </button>
     </div>
   );
+}
+
+TaskForm.propTypes = {
+  task: PropTypes.string.isRequired,
+  onInputChange: PropTypes.func.isRequired,
+  onKeyPress: PropTypes.func.isRequired,
+  onCreateTask: PropTypes.func.isRequired,
 };
 
 export default TaskForm;
