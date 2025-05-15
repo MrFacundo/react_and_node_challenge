@@ -1,33 +1,41 @@
-import PropTypes from 'prop-types';
+import { useState } from 'react';
+import { useTasks } from './TaskContext';
 
-function TaskForm({
-  task, onInputChange, onKeyPress, onCreateTask,
-}) {
+function TaskForm() {
+  const [taskText, setTaskText] = useState('');
+  const { addTask } = useTasks();
+
+  const handleCreateTask = () => {
+    if (taskText.trim()) {
+      addTask(taskText);
+      setTaskText('');
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleCreateTask();
+    }
+  };
+
   return (
     <div className="task-form">
       <input
         type="text"
         placeholder="Write new task here..."
-        value={task}
-        onChange={onInputChange}
-        onKeyDown={onKeyPress}
+        value={taskText}
+        onChange={(e) => setTaskText(e.target.value)}
+        onKeyDown={handleKeyPress}
       />
       <button
         type="button"
-        disabled={!task.trim()}
-        onClick={onCreateTask}
+        disabled={!taskText.trim()}
+        onClick={handleCreateTask}
       >
         Create
       </button>
     </div>
   );
 }
-
-TaskForm.propTypes = {
-  task: PropTypes.string.isRequired,
-  onInputChange: PropTypes.func.isRequired,
-  onKeyPress: PropTypes.func.isRequired,
-  onCreateTask: PropTypes.func.isRequired,
-};
 
 export default TaskForm;

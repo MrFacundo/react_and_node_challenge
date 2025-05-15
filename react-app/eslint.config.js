@@ -39,6 +39,7 @@ export default [
       ...js.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
       'react/react-in-jsx-scope': 'off',
+      'react/jsx-no-constructed-context-values': 'off',
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },

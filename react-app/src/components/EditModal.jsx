@@ -1,55 +1,65 @@
 import { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { useTasks } from './TaskContext';
 
-function EditModal({
-  isOpen,
-  taskToEdit,
-  onClose,
-  onSave,
-  onTextChange,
-}) {
+function EditModal() {
+  const {
+    isEditModalOpen, taskToEdit, closeEditModal, updateTask,
+  } = useTasks();
   const [visible, setVisible] = useState(false);
+  const [editedText, setEditedText] = useState('');
 
   useEffect(() => {
-    if (isOpen) {
+    if (taskToEdit) {
+      setEditedText(taskToEdit.text);
+    }
+  }, [taskToEdit]);
+
+  useEffect(() => {
+    if (isEditModalOpen) {
       setVisible(true);
     } else {
       const timeout = setTimeout(() => setVisible(false), 300);
       return () => clearTimeout(timeout);
     }
     return undefined;
-  }, [isOpen]);
+  }, [isEditModalOpen]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        closeEditModal();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [closeEditModal]);
+
+  const handleSave = () => {
+    if (taskToEdit && editedText.trim()) {
+      updateTask(taskToEdit.id, editedText);
+      closeEditModal();
+    }
+  };
 
   if (!visible) return null;
 
   return (
-    <div className={`modal-overlay ${isOpen ? 'fade-in' : 'fade-out'}`}>
-      <div className={`modal-content ${isOpen ? 'slide-in' : 'slide-out'}`}>
+    <div className={`modal-overlay ${isEditModalOpen ? 'fade-in' : 'fade-out'}`}>
+      <div className={`modal-content ${isEditModalOpen ? 'slide-in' : 'slide-out'}`}>
         <h2>Edit Task</h2>
         <textarea
           type="text"
-          value={taskToEdit?.text || ''}
-          onChange={onTextChange}
+          value={editedText}
+          onChange={(e) => setEditedText(e.target.value)}
         />
-        <button type="button" onClick={onSave}>Save</button>
-        <button type="button" onClick={onClose}>Cancel</button>
+        <button type="button" onClick={handleSave}>Save</button>
+        <button type="button" onClick={closeEditModal}>Cancel</button>
       </div>
     </div>
   );
 }
-
-EditModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  taskToEdit: PropTypes.shape({
-    text: PropTypes.string,
-  }),
-  onClose: PropTypes.func.isRequired,
-  onSave: PropTypes.func.isRequired,
-  onTextChange: PropTypes.func.isRequired,
-};
-
-EditModal.defaultProps = {
-  taskToEdit: null,
-};
 
 export default EditModal;

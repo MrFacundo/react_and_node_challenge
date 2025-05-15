@@ -1,6 +1,8 @@
-import PropTypes from 'prop-types';
+import { useTasks } from './TaskContext';
 
-function TaskListFooter({ hideCompleted, onToggleHideCompleted }) {
+function TaskListFooter() {
+  const { hideCompleted, toggleHideCompleted } = useTasks();
+
   return (
     <div className="task-list-footer">
       <label htmlFor="hide-completed-checkbox">
@@ -8,17 +10,12 @@ function TaskListFooter({ hideCompleted, onToggleHideCompleted }) {
           id="hide-completed-checkbox"
           type="checkbox"
           checked={hideCompleted}
-          onChange={onToggleHideCompleted}
+          onChange={toggleHideCompleted}
         />
         Hide completed
       </label>
     </div>
   );
 }
-
-TaskListFooter.propTypes = {
-  hideCompleted: PropTypes.bool.isRequired,
-  onToggleHideCompleted: PropTypes.func.isRequired,
-};
 
 export default TaskListFooter;
