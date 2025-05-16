@@ -1,6 +1,10 @@
-import api from '@hapi/hapi';
-import Joi from "joi";
-import knex from 'knex';
+const Hapi = require('@hapi/hapi');
+const Joi = require('joi');
+const knex = require('knex');
+const inert = require('@hapi/inert');
+const vision = require('@hapi/vision');
+const HapiSwagger = require('hapi-swagger');
+const Pack = require('./package.json');
 
 const db = knex({
     client: 'sqlite3',
@@ -11,7 +15,7 @@ const db = knex({
 });
 
 const init = async () => {
-    const server = api.server({
+    const server = Hapi.server({
         port: 3000,
         host: 'localhost',
         routes: {
@@ -21,6 +25,22 @@ const init = async () => {
             }
         }
     });
+
+    const swaggerOptions = {
+        info: {
+                title: 'Test API Documentation',
+                version: Pack.version,
+            },
+        };
+
+    await server.register([
+        inert,
+        vision,
+        {
+            plugin: HapiSwagger,
+            options: swaggerOptions
+        }
+    ]);
 
     server.route({
         method: 'GET',
@@ -41,6 +61,7 @@ const init = async () => {
         method: 'POST',
         path: '/todos',
         options: {
+            tags: ['api'],
             validate: {
                 payload: Joi.object({
                     description: Joi.string().required()
@@ -68,6 +89,7 @@ const init = async () => {
         method: 'GET',
         path: '/todos',
         options: {
+            tags: ['api'],
             validate: {
                 query: Joi.object({
                     filter: Joi.string().valid('INCOMPLETE', 'COMPLETE').optional(),
@@ -107,6 +129,7 @@ const init = async () => {
         method: 'PATCH',
         path: '/todo/{id}',
         options: {
+            tags: ['api'],
             validate: {
                 params: Joi.object({
                     id: Joi.number().integer().required()
@@ -152,6 +175,7 @@ const init = async () => {
         method: 'DELETE',
         path: '/todo/{id}',
         options: {
+            tags: ['api'],
             validate: {
                 params: Joi.object({
                     id: Joi.number().integer().required()
