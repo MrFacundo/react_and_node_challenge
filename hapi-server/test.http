@@ -1,0 +1,29 @@
+###
+
+POST http://localhost:3000/todos HTTP/1.1
+content-type: application/json
+
+{
+    "description": "Sample to-do item"
+}
+
+###
+
+GET http://localhost:3000/todos HTTP/1.1
+content-type: application/json
+
+###
+
+PATCH http://localhost:3000/todo/1 HTTP/1.1
+content-type: application/json
+
+{
+	"state": "COMPLETE"
+}
+
+### 
+
+DELETE http://localhost:3000/todo/1 HTTP/1.1
+content-type: application/json
+
+###

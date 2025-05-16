@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTasks } from './TaskContext';
 
 function EditModal() {
@@ -39,7 +39,8 @@ function EditModal() {
 
   const handleSave = () => {
     if (taskToEdit && editedText.trim()) {
-      updateTask(taskToEdit.id, editedText);
+      const sanitizedText = editedText.trim().replace(/\s+/g, ' ');
+      updateTask(taskToEdit.id, { description: sanitizedText });
       closeEditModal();
     }
   };

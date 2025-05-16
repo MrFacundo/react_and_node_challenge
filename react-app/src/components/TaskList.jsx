@@ -1,33 +1,29 @@
+import React from 'react';
 import { useTasks } from './TaskContext';
 
 function TaskList() {
   const {
-    openEditModal, filteredTasks, toggleTaskCompletion, deleteTask, toggleSortOrder,
+    openEditModal, tasks, toggleTaskCompletion, deleteTask, toggleSortOrder,
   } = useTasks();
 
   return (
     <div className="task-list">
-      <span
+      <button
         className="title"
-        role="button"
+        type="button"
         tabIndex={0}
-        onClick={filteredTasks.length > 1 ? toggleSortOrder : null}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' && filteredTasks.length > 1) {
-            toggleSortOrder();
-          }
-        }}
+        onClick={tasks.length > 1 ? toggleSortOrder : null}
       >
         Tasks ↑↓
-      </span>
-      {filteredTasks.map((task) => (
+      </button>
+      {tasks.map((task) => (
         <div key={task.id} className="task-item">
           <input
             type="checkbox"
-            checked={task.completed}
+            checked={task.state === 'COMPLETE'}
             onChange={() => toggleTaskCompletion(task.id)}
           />
-          <span className={task.completed ? 'completed' : ''}>{task.text}</span>
+          <span className={task.state === 'COMPLETE' ? 'completed' : ''}>{task.text}</span>
           <button type="button" onClick={() => openEditModal(task)}>Edit</button>
           <button type="button" onClick={() => deleteTask(task.id)}>Delete</button>
         </div>

@@ -38,7 +38,7 @@ export default [
     rules: {
       ...js.configs.recommended.rules,
       'react/react-in-jsx-scope': 'off',
-      'react/jsx-no-constructed-context-values': 'off',
+      'no-console': 'off',
     },
   },
 ];

@@ -1,66 +1,82 @@
 import {
-  createContext, useContext, useState, useEffect,
+  createContext, useContext, useState, useEffect, useMemo,
 } from 'react';
-
 import PropTypes from 'prop-types';
+import {
+  fetchTasks, createTask, updateTask, deleteTask, toggleTaskCompletion,
+} from '../api';
 
 const TaskContext = createContext();
 
 export function TaskProvider({ children }) {
-  const [tasks, setTasks] = useState(() => {
-    const storedTasks = localStorage.getItem('tasks');
-    return storedTasks ? JSON.parse(storedTasks) : [];
-  });
-
+  const [tasks, setTasks] = useState([]);
   const [hideCompleted, setHideCompleted] = useState(false);
   const [sortOrder, setSortOrder] = useState('default');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState(null);
 
   useEffect(() => {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-  }, [tasks]);
+    const loadTasks = async () => {
+      try {
+        const filter = hideCompleted ? 'INCOMPLETE' : undefined;
+        const orderBy = sortOrder === 'asc' || sortOrder === 'desc' ? sortOrder : undefined;
+        const tasksFromApi = await fetchTasks(filter, orderBy);
+        setTasks(tasksFromApi.map((task) => ({ ...task, text: task.description })));
+      } catch (error) {
+        console.error('Failed to fetch tasks:', error);
+      }
+    };
 
-  // Data context functions
-  const addTask = (taskText) => {
-    setTasks([...tasks, {
-      id: Date.now(),
-      text: taskText,
-      completed: false,
-    }]);
-  };
+    loadTasks();
+  }, [hideCompleted, sortOrder]);
 
-  const updateTask = (id, newText) => {
-    setTasks(tasks.map((task) => (
-      task.id === id ? { ...task, text: newText } : task
-    )));
-  };
-
-  const deleteTask = (id) => {
-    setTasks(tasks.filter((task) => task.id !== id));
-  };
-
-  const toggleTaskCompletion = (id) => {
-    setTasks(tasks.map((task) => (
-      task.id === id ? { ...task, completed: !task.completed } : task
-    )));
-  };
-
-  // UI context functions
-  const toggleHideCompleted = () => {
-    setHideCompleted(!hideCompleted);
-  };
-
-  const toggleSortOrder = () => {
-    if (sortOrder === 'default') {
-      setSortOrder('asc');
-    } else if (sortOrder === 'asc') {
-      setSortOrder('desc');
-    } else {
-      setSortOrder('default');
+  // Data state management functions
+  const addTask = async (taskText) => {
+    if (!taskText?.trim()) return;
+    try {
+      const newTask = await createTask(taskText);
+      setTasks([...tasks, { ...newTask, text: newTask.description }]);
+    } catch (error) {
+      console.error('Failed to create task:', error);
     }
   };
 
+  const modifyTask = async (id, updates) => {
+    try {
+      const updatedTask = await updateTask(id, updates);
+      setTasks(
+        tasks.map((task) => (
+          task.id === id
+            ? { ...updatedTask, text: updatedTask.description }
+            : task
+        )),
+      );
+    } catch (error) {
+      console.error('Failed to update task:', error);
+    }
+  };
+
+  const removeTask = async (id) => {
+    try {
+      await deleteTask(id);
+      setTasks(tasks.filter((task) => task.id !== id));
+    } catch (error) {
+      console.error('Failed to delete task:', error);
+    }
+  };
+
+  const toggleCompletion = async (id) => {
+    const task = tasks.find((t) => t.id === id);
+    if (!task) return;
+    try {
+      const updated = await toggleTaskCompletion(id, task.state);
+      setTasks(tasks.map((t) => (t.id === id ? { ...updated, text: updated.description } : t)));
+    } catch (error) {
+      console.error('Failed to toggle task completion:', error);
+    }
+  };
+
+  // UI state management functions
   const openEditModal = (task) => {
     setTaskToEdit(task);
     setIsEditModalOpen(true);
@@ -71,39 +87,34 @@ export function TaskProvider({ children }) {
     setIsEditModalOpen(false);
   };
 
-  const sortedTasks = [...tasks].sort((a, b) => {
-    if (sortOrder === 'asc') {
-      return a.text.localeCompare(b.text);
-    }
-    if (sortOrder === 'desc') {
-      return b.text.localeCompare(a.text);
-    }
-    return 0;
-  });
+  const toggleSortOrderFunc = () => {
+    const orders = ['default', 'asc', 'desc'];
+    setSortOrder(orders[(orders.indexOf(sortOrder) + 1) % orders.length]);
+  };
 
-  const filteredTasks = hideCompleted
-    ? sortedTasks.filter((item) => !item.completed)
-    : sortedTasks;
+  const value = useMemo(() => ({
+    tasks,
+    addTask,
+    updateTask: modifyTask,
+    deleteTask: removeTask,
+    toggleTaskCompletion: toggleCompletion,
+    hideCompleted,
+    isEditModalOpen,
+    taskToEdit,
+    toggleHideCompleted: () => setHideCompleted(!hideCompleted),
+    toggleSortOrder: toggleSortOrderFunc,
+    openEditModal,
+    closeEditModal,
+  }), [
+    tasks,
+    hideCompleted,
+    isEditModalOpen,
+    taskToEdit,
+    sortOrder,
+  ]);
 
   return (
-    <TaskContext.Provider
-      value={{
-        tasks,
-        hideCompleted,
-        sortOrder,
-        isEditModalOpen,
-        taskToEdit,
-        filteredTasks,
-        addTask,
-        updateTask,
-        deleteTask,
-        toggleTaskCompletion,
-        toggleHideCompleted,
-        toggleSortOrder,
-        openEditModal,
-        closeEditModal,
-      }}
-    >
+    <TaskContext.Provider value={value}>
       {children}
     </TaskContext.Provider>
   );

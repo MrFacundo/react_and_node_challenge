@@ -1,12 +1,36 @@
-# React + Vite
+# React App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend application for the Electro Challenge project. It is built with React and Vite.
 
-Currently, two official plugins are available:
+## Features
+- Provides a user interface for interacting with the backend.
+- Built with modern React features and Vite for fast development.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Setup Instructions
 
-## Expanding the ESLint configuration
+1. Navigate to the `react-app` directory:
+   ```bash
+   cd react-app
+   ```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+4. Open your browser and navigate to the provided local development URL.
+
+## Project Structure
+- `src/`: Contains the source code for the application.
+  - `components/`: Reusable React components.
+  - `api.js`: API utility functions for interacting with the backend.
+  - `App.jsx`: Main application component.
+- `public/`: Static assets.
+
+## Notes
+- Ensure the backend server is running before using the frontend application.
