@@ -14,6 +14,12 @@ const db = knex({
     useNullAsDefault: true
 });
 
+const formatToLocalTimestamp = (date) => {
+    const d = new Date(date);
+    const pad = (n) => (n < 10 ? '0' + n : n);
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+};
+
 const init = async () => {
     const server = Hapi.server({
         port: 3000,
@@ -92,8 +98,8 @@ const init = async () => {
             tags: ['api'],
             validate: {
                 query: Joi.object({
-                    filter: Joi.string().valid('INCOMPLETE', 'COMPLETE').optional(),
-                    orderBy: Joi.string().valid('asc', 'desc').optional()
+                    filter: Joi.string().valid('ALL', 'INCOMPLETE', 'COMPLETE').optional(),
+                    orderBy: Joi.string().valid('DESCRIPTION', 'CREATED_AT', 'COMPLETED_AT').optional()
                 })
             },
             response: {
@@ -109,16 +115,20 @@ const init = async () => {
             }
         },
         handler: async (request, h) => {
-            const { filter, orderBy } = request.query;
+            const { filter = 'ALL', orderBy = 'CREATED_AT' } = request.query;
             let query = db('todos');
 
-            if (filter) {
+            if (filter !== 'ALL') {
                 query = query.where('state', filter);
             }
 
-            const sortField = orderBy === 'asc' || orderBy === 'desc' ? 'description' : 'createdAt';
-            const sortOrder = orderBy || 'asc';
-            query = query.orderBy(sortField, sortOrder);
+            const sortField = {
+                DESCRIPTION: 'description',
+                CREATED_AT: 'createdAt',
+                COMPLETED_AT: 'completedAt'
+            }[orderBy];
+
+            query = query.orderBy(sortField, 'asc');
 
             const todos = await query;
             return h.response(todos).code(200);
@@ -159,10 +169,14 @@ const init = async () => {
                 return h.response({ error: 'To-do item not found' }).code(404);
             }
 
+            if (updates.description && todo.state === 'COMPLETE') {
+                return h.response({ error: 'Cannot modify description of a completed item' }).code(400);
+            }
+
             if (updates.state === 'INCOMPLETE' && todo.state === 'COMPLETE') {
                 updates.completedAt = null;
             } else if (updates.state === 'COMPLETE' && todo.state === 'INCOMPLETE') {
-                updates.completedAt = new Date();
+                updates.completedAt = formatToLocalTimestamp(new Date());
             }
 
             await db('todos').where({ id }).update(updates);

@@ -11,7 +11,7 @@ const TaskContext = createContext();
 export function TaskProvider({ children }) {
   const [tasks, setTasks] = useState([]);
   const [hideCompleted, setHideCompleted] = useState(false);
-  const [sortOrder, setSortOrder] = useState('default');
+  const [sortOrder, setSortOrder] = useState('');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState(null);
 
@@ -19,7 +19,7 @@ export function TaskProvider({ children }) {
     const loadTasks = async () => {
       try {
         const filter = hideCompleted ? 'INCOMPLETE' : undefined;
-        const orderBy = sortOrder === 'asc' || sortOrder === 'desc' ? sortOrder : undefined;
+        const orderBy = sortOrder;
         const tasksFromApi = await fetchTasks(filter, orderBy);
         setTasks(tasksFromApi.map((task) => ({ ...task, text: task.description })));
       } catch (error) {
@@ -88,7 +88,7 @@ export function TaskProvider({ children }) {
   };
 
   const toggleSortOrderFunc = () => {
-    const orders = ['default', 'asc', 'desc'];
+    const orders = ['DESCRIPTION', 'CREATED_AT', 'COMPLETED_AT'];
     setSortOrder(orders[(orders.indexOf(sortOrder) + 1) % orders.length]);
   };
 
