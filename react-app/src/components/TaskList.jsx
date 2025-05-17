@@ -24,7 +24,7 @@ function TaskList() {
             onChange={() => toggleTaskCompletion(task.id)}
           />
           <span className={task.state === 'COMPLETE' ? 'completed' : ''}>{task.text}</span>
-          <button type="button" onClick={() => openEditModal(task)}>Edit</button>
+          <button type="button" disabled={task.state === 'COMPLETE'} onClick={() => openEditModal(task)}>Edit</button>
           <button type="button" onClick={() => deleteTask(task.id)}>Delete</button>
         </div>
       ))}
