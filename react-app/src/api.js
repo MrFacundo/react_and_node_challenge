@@ -23,10 +23,11 @@ async function apiRequest(endpoint, token, options = {}) {
 
 // Task-related API functions
 
-export async function fetchTasks(filter, orderBy, token) {
+export async function fetchTasks(filter, orderBy, token, direction) {
   const params = new URLSearchParams();
   if (filter) params.append('filter', filter);
   if (orderBy) params.append('orderBy', orderBy);
+  if (direction) params.append('direction', direction);
   const endpoint = `/todos${params.toString() ? `?${params.toString()}` : ''}`;
   return apiRequest(endpoint, token);
 }
