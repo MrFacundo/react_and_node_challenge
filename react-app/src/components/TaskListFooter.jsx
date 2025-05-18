@@ -1,4 +1,3 @@
-import React from 'react';
 import { useTasks } from './TaskContext';
 
 function TaskListFooter() {

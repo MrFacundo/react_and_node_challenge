@@ -1,4 +1,3 @@
-import React from 'react';
 import { useTasks } from './TaskContext';
 
 function TaskList() {
@@ -9,7 +8,7 @@ function TaskList() {
   return (
     <div className="task-list">
       <button
-        className="title"
+        className="action-btn"
         type="button"
         tabIndex={0}
         onClick={tasks.length > 1 ? toggleSortOrder : null}

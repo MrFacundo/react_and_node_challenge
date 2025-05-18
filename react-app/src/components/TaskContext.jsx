@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import {
   fetchTasks, createTask, updateTask, deleteTask, toggleTaskCompletion,
 } from '../api';
+import { useAuth } from './AuthContext';
 
 const TaskContext = createContext();
 
@@ -14,27 +15,32 @@ export function TaskProvider({ children }) {
   const [sortOrder, setSortOrder] = useState('');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState(null);
+  const { token } = useAuth();
 
   useEffect(() => {
     const loadTasks = async () => {
       try {
         const filter = hideCompleted ? 'INCOMPLETE' : undefined;
         const orderBy = sortOrder;
-        const tasksFromApi = await fetchTasks(filter, orderBy);
+        const tasksFromApi = await fetchTasks(filter, orderBy, token);
         setTasks(tasksFromApi.map((task) => ({ ...task, text: task.description })));
       } catch (error) {
         console.error('Failed to fetch tasks:', error);
       }
     };
 
-    loadTasks();
-  }, [hideCompleted, sortOrder]);
+    if (token) {
+      loadTasks();
+    } else {
+      setTasks([]);
+    }
+  }, [hideCompleted, sortOrder, token]);
 
   // Data state management functions
   const addTask = async (taskText) => {
     if (!taskText?.trim()) return;
     try {
-      const newTask = await createTask(taskText);
+      const newTask = await createTask(taskText, token);
       setTasks([...tasks, { ...newTask, text: newTask.description }]);
     } catch (error) {
       console.error('Failed to create task:', error);
@@ -43,7 +49,7 @@ export function TaskProvider({ children }) {
 
   const modifyTask = async (id, updates) => {
     try {
-      const updatedTask = await updateTask(id, updates);
+      const updatedTask = await updateTask(id, updates, token);
       setTasks(
         tasks.map((task) => (
           task.id === id
@@ -58,7 +64,7 @@ export function TaskProvider({ children }) {
 
   const removeTask = async (id) => {
     try {
-      await deleteTask(id);
+      await deleteTask(id, token);
       setTasks(tasks.filter((task) => task.id !== id));
     } catch (error) {
       console.error('Failed to delete task:', error);
@@ -69,7 +75,7 @@ export function TaskProvider({ children }) {
     const task = tasks.find((t) => t.id === id);
     if (!task) return;
     try {
-      const updated = await toggleTaskCompletion(id, task.state);
+      const updated = await toggleTaskCompletion(id, task.state, token);
       setTasks(tasks.map((t) => (t.id === id ? { ...updated, text: updated.description } : t)));
     } catch (error) {
       console.error('Failed to toggle task completion:', error);

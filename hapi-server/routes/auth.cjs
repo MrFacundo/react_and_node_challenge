@@ -1,8 +1,7 @@
 const db = require("../db.cjs");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../utils/helpers.cjs");
-const { TokenResponseSchema, MessageResponseSchema } = require("../schemas/index.cjs");
-const Joi = require("joi");
+const { UserLoginPayload, TokenResponseSchema, MessageResponseSchema } = require("../schemas/index.cjs");
 const { invalidatedTokens } = require("../auth.cjs");
 
 module.exports = [
@@ -14,10 +13,7 @@ module.exports = [
 			auth: false,
 			plugins: { "hapi-swagger": { security: [] } },
 			validate: {
-				payload: Joi.object({
-					email: Joi.string().email().required(),
-					password: Joi.string().required(),
-				}),
+				payload: UserLoginPayload,
 			},
 			response: { schema: TokenResponseSchema },
 		},

@@ -8,6 +8,25 @@ const UserSchema = Joi.object({
 	updatedAt: Joi.date().required(),
 }).label("User");
 
+const UserCreatePayload = Joi.object({
+	email: Joi.string().email().required(),
+	password: Joi.string().required(),
+	name: Joi.string().required(),
+}).label("UserCreatePayload");
+
+const UserUpdatePayload = Joi.object({
+	email: Joi.string().email().optional(),
+	password: Joi.string().optional(),
+	name: Joi.string().optional(),
+})
+	.or("email", "password", "name")
+	.label("UserUpdatePayload");
+
+UserLoginPayload = Joi.object({
+	email: Joi.string().email().required(),
+	password: Joi.string().required(),
+}).label("UserLoginPayload");
+
 const TokenResponseSchema = Joi.object({
 	token: Joi.string().required(),
 }).label("TokenResponse");
@@ -40,28 +59,15 @@ const TodoUpdatePayload = Joi.object({
 	.or("description", "state")
 	.label("TodoUpdatePayload");
 
-const UserCreatePayload = Joi.object({
-	email: Joi.string().email().required(),
-	password: Joi.string().required(),
-	name: Joi.string().required(),
-}).label("UserCreatePayload");
-
-const UserUpdatePayload = Joi.object({
-	email: Joi.string().email().optional(),
-	password: Joi.string().optional(),
-	name: Joi.string().optional(),
-})
-	.or("email", "password", "name")
-	.label("UserUpdatePayload");
-
 module.exports = {
 	UserSchema,
+	UserCreatePayload,
+	UserUpdatePayload,
+	UserLoginPayload,
 	TokenResponseSchema,
 	MessageResponseSchema,
 	TodoResponseSchema,
 	TodoArraySchema,
 	TodoCreatePayload,
-	TodoUpdatePayload,
-	UserCreatePayload,
-	UserUpdatePayload,
+	TodoUpdatePayload
 };
