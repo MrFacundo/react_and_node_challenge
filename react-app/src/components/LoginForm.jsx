@@ -30,7 +30,7 @@ function LoginForm() {
   return (
     <>
       <h1 className="app-title">To-do List</h1>
-      <span className="app-subtitle">Your team deserves better than Jira.</span>
+      <span className="app-subtitle">Like Jira, without the bloat</span>
       <form onSubmit={handleSubmit}>
         <h2>Login</h2>
         <input

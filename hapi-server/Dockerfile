@@ -4,5 +4,5 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm install --production
 COPY . .
-EXPOSE 3000
-CMD ["node", "server.cjs"]
+
+CMD ["sh", "-c", "NODE_ENV=development npx knex migrate:latest --knexfile ./knexfile.cjs && NODE_ENV=development node server.cjs"]

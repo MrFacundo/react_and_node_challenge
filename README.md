@@ -1,4 +1,4 @@
-# Electro Challenge
+# React +  Hapi.js Todo App
 
 This repository contains two applications:
 

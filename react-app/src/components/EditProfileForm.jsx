@@ -47,6 +47,7 @@ function EditProfileForm() {
         <strong>Username:</strong>
         {' '}
         {user?.name}
+        <br />
         <strong>Email:</strong>
         {' '}
         {user?.email}

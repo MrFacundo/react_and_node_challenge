@@ -1,11 +1,8 @@
-version: '3.8'
 services:
   backend:
     build: ./hapi-server
     ports:
       - "3000:3000"
-    volumes:
-      - ./hapi-server/dev.sqlite3:/app/dev.sqlite3
     environment:
       - NODE_ENV=production
   frontend:
