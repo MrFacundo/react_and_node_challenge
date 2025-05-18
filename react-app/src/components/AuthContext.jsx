@@ -31,8 +31,8 @@ export function AuthProvider({ children }) {
     setToken(t);
   };
 
-  const register = async (username, password) => {
-    const { token: t } = await registerUser(username, password);
+  const register = async (email,  password, username) => {
+    const { token: t } = await registerUser(email,  password, username);
     setToken(t);
   };
 

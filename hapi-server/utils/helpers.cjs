@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 exports.formatToLocalTimestamp = (date) => {
 	const d = new Date(date);
 	const pad = (n) => (n < 10 ? "0" + n : n);
@@ -8,7 +10,7 @@ exports.formatToLocalTimestamp = (date) => {
 	const Jwt = require("@hapi/jwt");
 	return Jwt.token.generate(
 	  { id, aud: "urn:audience:test", iss: "urn:issuer:test" },
-	  { key: "your_secret_key", algorithm: "HS256" }
+	  { key: process.env.JWT_SECRET, algorithm: "HS256" }
 	);
   };
   

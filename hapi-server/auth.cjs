@@ -1,10 +1,11 @@
+require('dotenv').config();
 const invalidatedTokens = new Set();
 
 module.exports = {
   invalidatedTokens,
   setupAuth: (server) => {
     server.auth.strategy("jwt_auth_strategy", "jwt", {
-      keys: "your_secret_key",
+      keys: process.env.JWT_SECRET,
       verify: {
         aud: "urn:audience:test",
         iss: "urn:issuer:test",

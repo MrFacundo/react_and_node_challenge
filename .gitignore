@@ -26,3 +26,6 @@ dist-ssr
 # SQLite database files
 dev.sqlite3
 *.sqlite3
+
+# Environment variables
+#.env

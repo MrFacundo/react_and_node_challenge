@@ -8,7 +8,15 @@ async function apiRequest(endpoint, options = {}, token) {
   }
   const response = await fetch(url, { ...options, headers });
   if (!response.ok) {
-    throw new Error(`API error: ${response.statusText}`);
+    let errorBody;
+    try {
+      errorBody = await response.json();
+    } catch {
+      errorBody = { message: response.statusText };
+    }
+    const error = new Error('API error');
+    error.body = errorBody;
+    throw error;
   }
   return options.method === 'DELETE' ? undefined : response.json();
 }
