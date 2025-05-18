@@ -13,6 +13,7 @@ module.exports = [
 		method: "POST",
 		path: "/todos",
 		options: {
+			description: "Creates a new to-do item",
 			tags: ["api"],
 			validate: {
 				payload: TodoCreatePayload,
@@ -31,6 +32,7 @@ module.exports = [
 		method: "GET",
 		path: "/todos",
 		options: {
+			description: "Retrieves all to-do items of the authenticated user",
 			tags: ["api"],
 			validate: {
 				query: Joi.object({
@@ -67,6 +69,7 @@ module.exports = [
 		method: "PATCH",
 		path: "/todo/{id}",
 		options: {
+			description: "Updates a to-do item",
 			tags: ["api"],
 			validate: {
 				params: Joi.object({ id: Joi.number().integer().required() }),
@@ -111,6 +114,7 @@ module.exports = [
 		method: "DELETE",
 		path: "/todo/{id}",
 		options: {
+			description: "Deletes a to-do item",
 			tags: ["api"],
 			validate: {
 				params: Joi.object({ id: Joi.number().integer().required() }),

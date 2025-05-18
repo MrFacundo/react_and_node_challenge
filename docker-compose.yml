@@ -7,7 +7,9 @@ services:
       - NODE_ENV=production
   frontend:
     build: ./react-app
+    command: npm run dev -- --host
     ports:
-      - "80:80"
+      - "5173:5173"
+    working_dir: /app
     depends_on:
       - backend

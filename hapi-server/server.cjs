@@ -2,6 +2,7 @@ const Hapi = require("@hapi/hapi");
 const plugins = require("./plugins.cjs");
 const routes = require("./routes/index.cjs");
 const { setupAuth } = require("./auth.cjs");
+require('dotenv').config();
 
 const init = async () => {
   const server = Hapi.server({
@@ -9,7 +10,7 @@ const init = async () => {
     host: "0.0.0.0",
     routes: {
       cors: {
-        origin: ["http://localhost", "http://localhost:5173"],
+        origin: [process.env.FRONTEND_URL],
         additionalHeaders: ["Accept", "Content-Type"],
       },
     },

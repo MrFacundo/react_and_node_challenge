@@ -13,6 +13,7 @@ module.exports = [
 		method: "POST",
 		path: "/users",
 		options: {
+			description: "Creates a new user and returns a credential",
 			tags: ["api"],
 			auth: false,
 			plugins: { "hapi-swagger": { security: [] } },
@@ -43,6 +44,7 @@ module.exports = [
 		method: "GET",
 		path: "/me",
 		options: {
+			description: "Returns the details of the authenticated user",
 			tags: ["api"],
 			plugins: { "hapi-swagger": { security: [{ jwt: [] }] } },
 			response: { schema: UserSchema },
@@ -65,6 +67,7 @@ module.exports = [
 		method: "PATCH",
 		path: "/me",
 		options: {
+			description: "Updates the details of the authenticated user",
 			tags: ["api"],
 			validate: {
 				payload: UserUpdatePayload,

@@ -11,17 +11,13 @@ This repository contains two applications:
 
 ## Environment Setup
 - Backend: Copy `hapi-server/.env.example` to `hapi-server/.env` and set `JWT_SECRET`.
-- Frontend: Copy `react-app/.env.example` to `react-app/.env` and set `VITE_API_BASE_URL` (default: `http://localhost:3000`).
+- Frontend: Copy `react-app/.env.example` to `react-app/.env` and set `VITE_API_BASE_URL`
 
 ## Running with Docker
 From the project root:
 ```bash
 docker-compose up --build
 ```
-- Backend API: http://localhost:3000
-- API docs:   http://localhost:3000/docs
-- Frontend:   http://localhost
-
 ## Running Locally
 ### Backend
 ```bash
@@ -40,6 +36,8 @@ npm install
 npm run dev
 ```
 
+### URLS
+
 - Backend API: http://localhost:3000
 - API docs:   http://localhost:3000/docs
-- Frontend:   http://localhost (Docker) / http://localhost:5173 (local)
+- Frontend:   http://localhost:5173

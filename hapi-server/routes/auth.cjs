@@ -10,6 +10,7 @@ module.exports = [
 		path: "/login",
 		options: {
 			tags: ["api"],
+			description: "Authenticates a user and return  a credential",
 			auth: false,
 			plugins: { "hapi-swagger": { security: [] } },
 			validate: {
@@ -32,6 +33,7 @@ module.exports = [
 		method: "POST",
 		path: "/logout",
 		options: {
+			description: "Invalidates the credentials of the authenticated user",
 			tags: ["api"],
 			response: { schema: MessageResponseSchema },
 		},
