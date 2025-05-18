@@ -6,7 +6,6 @@ import {
   loginUser, registerUser, getProfile, updateProfile as apiUpdateProfile,
 } from '../api';
 
-
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
@@ -14,7 +13,7 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
-// Handles auth token lifecycle and user profile fetch on mount/token change
+  // Handles auth token lifecycle and user profile fetch on mount/token change
   useEffect(() => {
     if (token) {
       localStorage.setItem('token', token);

@@ -12,7 +12,7 @@ const TaskContext = createContext();
 export function TaskProvider({ children }) {
   const [tasks, setTasks] = useState([]);
   const [hideCompleted, setHideCompleted] = useState(false);
-  const [sortOrder, setSortOrder] = useState('');
+  const [sortOrder, setSortOrder] = useState('CREATED_AT');
   const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState(null);
   const { token } = useAuth();
@@ -22,7 +22,10 @@ export function TaskProvider({ children }) {
     const loadTasks = async () => {
       try {
         const filter = hideCompleted ? 'INCOMPLETE' : undefined;
-        const orderBy = sortOrder;
+        let orderBy = 'CREATED_AT';
+        if (sortOrder === 'DESCRIPTION_ASC' || sortOrder === 'DESCRIPTION_DESC') {
+          orderBy = 'DESCRIPTION';
+        }
         const tasksFromApi = await fetchTasks(filter, orderBy, token);
         setTasks(tasksFromApi.map((task) => ({ ...task, text: task.description })));
       } catch (error) {
@@ -30,12 +33,10 @@ export function TaskProvider({ children }) {
       }
     };
 
-    if (token) {
+    if (token && sortOrder !== 'DESCRIPTION_DESC') {
       loadTasks();
-    } else {
-      setTasks([]);
     }
-  }, [hideCompleted, sortOrder]);
+  }, [hideCompleted, sortOrder, token]);
 
   // Data state management functions
   const addTask = async (taskText) => {
@@ -94,14 +95,26 @@ export function TaskProvider({ children }) {
     setIsEditTaskModalOpen(false);
   };
 
+  const displayedTasks = useMemo(() => {
+    if (sortOrder === 'DESCRIPTION_DESC') {
+      return [...tasks].sort((a, b) => b.description.localeCompare(a.description));
+    }
+    return tasks;
+  }, [tasks, sortOrder]);
+
   const toggleSortOrderFunc = () => {
-    const orders = ['DESCRIPTION', 'CREATED_AT', 'COMPLETED_AT'];
-    setSortOrder(orders[(orders.indexOf(sortOrder) + 1) % orders.length]);
+    if (sortOrder === 'CREATED_AT') {
+      setSortOrder('DESCRIPTION_ASC');
+    } else if (sortOrder === 'DESCRIPTION_ASC') {
+      setSortOrder('DESCRIPTION_DESC');
+    } else {
+      setSortOrder('CREATED_AT');
+    }
   };
 
   // Memoize context value to prevent unnecessary re-renders
   const value = useMemo(() => ({
-    tasks,
+    tasks: displayedTasks,
     addTask,
     updateTask: modifyTask,
     deleteTask: removeTask,
@@ -114,7 +127,7 @@ export function TaskProvider({ children }) {
     openEditTaskModal,
     closeEditTaskModal,
   }), [
-    tasks,
+    displayedTasks,
     hideCompleted,
     isEditTaskModalOpen,
     taskToEdit,
