@@ -26,8 +26,6 @@ npm install
 npx knex migrate:latest --knexfile knexfile.cjs
 npm start
 ```
-- API:  http://localhost:3000
-- Docs: http://localhost:3000/docs
 
 ### Frontend
 ```bash
