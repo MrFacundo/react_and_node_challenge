@@ -1,7 +1,6 @@
 const Hapi = require("@hapi/hapi");
 const plugins = require("./plugins.cjs");
 const routes = require("./routes/index.cjs");
-const db = require("./db.cjs");
 const { setupAuth } = require("./auth.cjs");
 
 const init = async () => {

@@ -2,7 +2,7 @@ import { useTasks } from './TaskContext';
 
 function TaskList() {
   const {
-    openEditModal, tasks, toggleTaskCompletion, deleteTask, toggleSortOrder,
+    openEditTaskModal, tasks, toggleTaskCompletion, deleteTask, toggleSortOrder,
   } = useTasks();
 
   return (
@@ -23,7 +23,7 @@ function TaskList() {
             onChange={() => toggleTaskCompletion(task.id)}
           />
           <span className={task.state === 'COMPLETE' ? 'completed' : ''}>{task.text}</span>
-          <button type="button" disabled={task.state === 'COMPLETE'} onClick={() => openEditModal(task)}>Edit</button>
+          <button type="button" disabled={task.state === 'COMPLETE'} onClick={() => openEditTaskModal(task)}>Edit</button>
           <button type="button" onClick={() => deleteTask(task.id)}>Delete</button>
         </div>
       ))}

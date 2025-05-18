@@ -276,10 +276,12 @@ textarea {
 }
 
 
-.edit-profile-form {
+.edit-profile-form, .registration-form {
 	display: flex;
 	flex-direction: column;
+	place-self: center;
 	gap: 1rem;
+	width: 400px;
 }
 
 .edit-profile-form > p{

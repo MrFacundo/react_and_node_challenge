@@ -13,10 +13,11 @@ export function TaskProvider({ children }) {
   const [tasks, setTasks] = useState([]);
   const [hideCompleted, setHideCompleted] = useState(false);
   const [sortOrder, setSortOrder] = useState('');
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState(null);
   const { token } = useAuth();
 
+  // Fetch tasks from API when the component mounts or when fetchiing parameters change
   useEffect(() => {
     const loadTasks = async () => {
       try {
@@ -34,7 +35,7 @@ export function TaskProvider({ children }) {
     } else {
       setTasks([]);
     }
-  }, [hideCompleted, sortOrder, token]);
+  }, [hideCompleted, sortOrder]);
 
   // Data state management functions
   const addTask = async (taskText) => {
@@ -83,14 +84,14 @@ export function TaskProvider({ children }) {
   };
 
   // UI state management functions
-  const openEditModal = (task) => {
+  const openEditTaskModal = (task) => {
     setTaskToEdit(task);
-    setIsEditModalOpen(true);
+    setIsEditTaskModalOpen(true);
   };
 
-  const closeEditModal = () => {
+  const closeEditTaskModal = () => {
     setTaskToEdit(null);
-    setIsEditModalOpen(false);
+    setIsEditTaskModalOpen(false);
   };
 
   const toggleSortOrderFunc = () => {
@@ -98,6 +99,7 @@ export function TaskProvider({ children }) {
     setSortOrder(orders[(orders.indexOf(sortOrder) + 1) % orders.length]);
   };
 
+  // Memoize context value to prevent unnecessary re-renders
   const value = useMemo(() => ({
     tasks,
     addTask,
@@ -105,16 +107,16 @@ export function TaskProvider({ children }) {
     deleteTask: removeTask,
     toggleTaskCompletion: toggleCompletion,
     hideCompleted,
-    isEditModalOpen,
+    isEditTaskModalOpen,
     taskToEdit,
     toggleHideCompleted: () => setHideCompleted(!hideCompleted),
     toggleSortOrder: toggleSortOrderFunc,
-    openEditModal,
-    closeEditModal,
+    openEditTaskModal,
+    closeEditTaskModal,
   }), [
     tasks,
     hideCompleted,
-    isEditModalOpen,
+    isEditTaskModalOpen,
     taskToEdit,
     sortOrder,
   ]);

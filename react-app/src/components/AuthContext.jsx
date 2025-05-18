@@ -1,5 +1,11 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import { loginUser, registerUser, getProfile, updateProfile as apiUpdateProfile } from '../api';
+import {
+  createContext, useContext, useState, useEffect, useMemo,
+} from 'react';
+import PropTypes from 'prop-types';
+import {
+  loginUser, registerUser, getProfile, updateProfile as apiUpdateProfile,
+} from '../api';
+
 
 const AuthContext = createContext();
 
@@ -8,6 +14,7 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
+// Handles auth token lifecycle and user profile fetch on mount/token change
   useEffect(() => {
     if (token) {
       localStorage.setItem('token', token);
@@ -31,8 +38,8 @@ export function AuthProvider({ children }) {
     setToken(t);
   };
 
-  const register = async (email,  password, username) => {
-    const { token: t } = await registerUser(email,  password, username);
+  const register = async (email, password, username) => {
+    const { token: t } = await registerUser(email, password, username);
     setToken(t);
   };
 
@@ -45,13 +52,22 @@ export function AuthProvider({ children }) {
     setUser(updated);
   };
 
+  // Memoize context value to prevent unnecessary re-renders
+  const contextValue = useMemo(() => ({
+    user, token, login, register, logout, updateProfile,
+  }), [user, token]);
+
   if (loading) return <div>Loading...</div>;
 
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout, updateProfile }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );
 }
+
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 export const useAuth = () => useContext(AuthContext);

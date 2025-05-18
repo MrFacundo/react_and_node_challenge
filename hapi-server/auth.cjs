@@ -1,6 +1,8 @@
 require('dotenv').config();
 const invalidatedTokens = new Set();
 
+// JWT authentication strategy
+
 module.exports = {
   invalidatedTokens,
   setupAuth: (server) => {

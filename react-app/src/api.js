@@ -1,6 +1,6 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-async function apiRequest(endpoint, options = {}, token) {
+async function apiRequest(endpoint, token, options = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
   const headers = { ...(options.headers || {}) };
   if (token) {
@@ -21,34 +21,36 @@ async function apiRequest(endpoint, options = {}, token) {
   return options.method === 'DELETE' ? undefined : response.json();
 }
 
+// Task-related API functions
+
 export async function fetchTasks(filter, orderBy, token) {
   const params = new URLSearchParams();
   if (filter) params.append('filter', filter);
   if (orderBy) params.append('orderBy', orderBy);
   const endpoint = `/todos${params.toString() ? `?${params.toString()}` : ''}`;
-  return apiRequest(endpoint, {}, token);
+  return apiRequest(endpoint, token);
 }
 
 export async function createTask(description, token) {
-  return apiRequest('/todos', {
+  return apiRequest('/todos', token, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ description }),
-  }, token);
+  });
 }
 
 export async function updateTask(id, updates, token) {
-  return apiRequest(`/todo/${id}`, {
+  return apiRequest(`/todo/${id}`, token, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(updates),
-  }, token);
+  });
 }
 
 export async function deleteTask(id, token) {
-  return apiRequest(`/todo/${id}`, {
+  return apiRequest(`/todo/${id}`, token, {
     method: 'DELETE',
-  }, token);
+  });
 }
 
 export async function toggleTaskCompletion(id, currentState, token) {
@@ -57,10 +59,10 @@ export async function toggleTaskCompletion(id, currentState, token) {
   }, token);
 }
 
-// --- AUTH & USER PROFILE API ---
+// User-related API functions
 
 export async function loginUser(email, password) {
-  return apiRequest('/login', {
+  return apiRequest('/login', undefined, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
@@ -68,7 +70,7 @@ export async function loginUser(email, password) {
 }
 
 export async function registerUser(email, password, name) {
-  return apiRequest('/users', {
+  return apiRequest('/users', undefined, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password, name }),
@@ -76,13 +78,13 @@ export async function registerUser(email, password, name) {
 }
 
 export async function getProfile(token) {
-  return apiRequest('/me', {}, token);
+  return apiRequest('/me', token);
 }
 
 export async function updateProfile(token, updates) {
-  return apiRequest('/me', {
+  return apiRequest('/me', token, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(updates),
-  }, token);
+  });
 }

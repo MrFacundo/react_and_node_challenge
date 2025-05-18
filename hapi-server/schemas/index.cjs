@@ -1,5 +1,7 @@
 const Joi = require("joi");
 
+// Joi schemas for validating request payloads and responses
+
 const UserSchema = Joi.object({
 	id: Joi.number().integer().required(),
 	email: Joi.string().email().required(),
