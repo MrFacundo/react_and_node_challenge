@@ -10,8 +10,9 @@ This repository contains two applications:
 - Node.js and npm (for local usage)
 
 ## Environment Setup
-- Backend: Copy `hapi-server/.env.example` to `hapi-server/.env` and set `JWT_SECRET`.
-- Frontend: Copy `react-app/.env.example` to `react-app/.env` and set `VITE_API_BASE_URL`
+Copy the example environment files and set the required variables.
+- Backend: `hapi-server/.env.example`
+- Frontend: `react-app/.env.example` 
 
 ## Running with Docker
 From the project root:
@@ -23,7 +24,7 @@ docker-compose up --build
 ```bash
 cd hapi-server
 npm install
-npx knex migrate:latest --knexfile knexfile.cjs
+npm run migrate
 npm start
 ```
 
