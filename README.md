@@ -1,15 +1,45 @@
 # Electro Challenge
 
-This repository contains two main applications:
+This repository contains two applications:
 
-1. **Backend (Hapi Server)**
-   - A server-side application built with Hapi.js.
-   - It uses SQLite as the database and Knex.js for query building and migrations.
-   - To set up the backend, navigate to the `hapi-server` directory and follow the instructions in its `README.md`.
+- **Backend (Hapi Server)**: Hapi.js, SQLite, Knex.js
+- **Frontend (React App)**: React, Vite
 
-2. **Frontend (React App)**
-   - A client-side application built with React and Vite.
-   - It provides a user interface for interacting with the backend.
-   - To set up the frontend, navigate to the `react-app` directory and follow the instructions in its `README.md`.
+## Prerequisites
+- Docker and Docker Compose (for Docker usage)
+- Node.js and npm (for local usage)
 
-Both applications are designed to work together to provide a full-stack solution.
+## Environment Setup
+- Backend: Copy `hapi-server/.env.example` to `hapi-server/.env` and set `JWT_SECRET`.
+- Frontend: Copy `react-app/.env.example` to `react-app/.env` and set `VITE_API_BASE_URL` (default: `http://localhost:3000`).
+
+## Running with Docker
+From the project root:
+```bash
+docker-compose up --build
+```
+- Backend API: http://localhost:3000
+- API docs:   http://localhost:3000/docs
+- Frontend:   http://localhost
+
+## Running Locally
+### Backend
+```bash
+cd hapi-server
+npm install
+npx knex migrate:latest --knexfile knexfile.cjs
+npm start
+```
+- API:  http://localhost:3000
+- Docs: http://localhost:3000/docs
+
+### Frontend
+```bash
+cd react-app
+npm install
+npm run dev
+```
+
+- Backend API: http://localhost:3000
+- API docs:   http://localhost:3000/docs
+- Frontend:   http://localhost (Docker) / http://localhost:5173 (local)

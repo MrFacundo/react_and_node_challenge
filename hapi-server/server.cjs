@@ -6,10 +6,10 @@ const { setupAuth } = require("./auth.cjs");
 const init = async () => {
   const server = Hapi.server({
     port: 3000,
-    host: "localhost",
+    host: "0.0.0.0",
     routes: {
       cors: {
-        origin: ["http://localhost:5173"],
+        origin: ["http://localhost", "http://localhost:5173"],
         additionalHeaders: ["Accept", "Content-Type"],
       },
     },
