@@ -9,41 +9,52 @@ import { useAuth } from './AuthContext';
 
 const TaskContext = createContext();
 
+function getOrderParams(sortOrder) {
+  if (sortOrder === 'DESCRIPTION_ASC') {
+    return { orderBy: 'DESCRIPTION', direction: 'asc' };
+  }
+  if (sortOrder === 'DESCRIPTION_DESC') {
+    return { orderBy: 'DESCRIPTION', direction: 'desc' };
+  }
+  if (sortOrder === 'CREATED_AT_DESC') {
+    return { orderBy: 'CREATED_AT', direction: 'desc' };
+  }
+  return { orderBy: 'CREATED_AT', direction: 'asc' };
+}
+
 export function TaskProvider({ children }) {
   const [tasks, setTasks] = useState([]);
   const [hideCompleted, setHideCompleted] = useState(false);
-  const [sortOrder, setSortOrder] = useState('CREATED_AT');
+  const [sortOrder, setSortOrder] = useState('CREATED_AT_ASC');
   const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState(null);
   const { token } = useAuth();
 
-  // Fetch tasks from API when the component mounts or when fetchiing parameters change
+  // Fetch tasks from API when the component mounts or when fetching parameters change
   useEffect(() => {
     const loadTasks = async () => {
       try {
         const filter = hideCompleted ? 'INCOMPLETE' : undefined;
-        let orderBy = 'CREATED_AT';
-        if (sortOrder === 'DESCRIPTION_ASC' || sortOrder === 'DESCRIPTION_DESC') {
-          orderBy = 'DESCRIPTION';
-        }
-        const tasksFromApi = await fetchTasks(filter, orderBy, token);
+        const { orderBy, direction } = getOrderParams(sortOrder);
+        const tasksFromApi = await fetchTasks(filter, orderBy, token, direction);
         setTasks(tasksFromApi.map((task) => ({ ...task, text: task.description })));
       } catch (error) {
         console.error('Failed to fetch tasks:', error);
       }
     };
 
-    if (token && sortOrder !== 'DESCRIPTION_DESC') {
-      loadTasks();
-    }
+    loadTasks();
   }, [hideCompleted, sortOrder, token]);
 
   // Data state management functions
   const addTask = async (taskText) => {
     if (!taskText?.trim()) return;
     try {
-      const newTask = await createTask(taskText, token);
-      setTasks([...tasks, { ...newTask, text: newTask.description }]);
+      await createTask(taskText, token);
+      const filter = hideCompleted ? 'INCOMPLETE' : undefined;
+      const { orderBy, direction } = getOrderParams(sortOrder);
+      const tasksFromApi = await fetchTasks(filter, orderBy, token, direction);
+      setTasks(tasksFromApi.map((task) => ({ ...task, text: task.description })));
     } catch (error) {
       console.error('Failed to create task:', error);
     }
@@ -95,26 +106,21 @@ export function TaskProvider({ children }) {
     setIsEditTaskModalOpen(false);
   };
 
-  const displayedTasks = useMemo(() => {
-    if (sortOrder === 'DESCRIPTION_DESC') {
-      return [...tasks].sort((a, b) => b.description.localeCompare(a.description));
-    }
-    return tasks;
-  }, [tasks, sortOrder]);
-
   const toggleSortOrderFunc = () => {
-    if (sortOrder === 'CREATED_AT') {
+    if (sortOrder === 'CREATED_AT_ASC') {
+      setSortOrder('CREATED_AT_DESC');
+    } else if (sortOrder === 'CREATED_AT_DESC') {
       setSortOrder('DESCRIPTION_ASC');
     } else if (sortOrder === 'DESCRIPTION_ASC') {
       setSortOrder('DESCRIPTION_DESC');
     } else {
-      setSortOrder('CREATED_AT');
+      setSortOrder('CREATED_AT_ASC');
     }
   };
 
   // Memoize context value to prevent unnecessary re-renders
   const value = useMemo(() => ({
-    tasks: displayedTasks,
+    tasks,
     addTask,
     updateTask: modifyTask,
     deleteTask: removeTask,
@@ -127,7 +133,7 @@ export function TaskProvider({ children }) {
     openEditTaskModal,
     closeEditTaskModal,
   }), [
-    displayedTasks,
+    tasks,
     hideCompleted,
     isEditTaskModalOpen,
     taskToEdit,

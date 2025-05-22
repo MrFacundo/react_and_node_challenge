@@ -42,12 +42,15 @@ module.exports = [
 					orderBy: Joi.string()
 						.valid("DESCRIPTION", "CREATED_AT", "COMPLETED_AT")
 						.optional(),
+					direction: Joi.string()
+						.valid("asc", "desc")
+						.optional(),
 				}),
 			},
 			response: { schema: TodoArraySchema },
 		},
 		handler: async (request, h) => {
-			const { filter = "ALL", orderBy = "CREATED_AT" } = request.query;
+			const { filter = "ALL", orderBy = "CREATED_AT", direction = "asc" } = request.query;
 			const userId = request.auth.credentials.id;
 			let query = db("todos").where({ userId });
 
@@ -61,7 +64,7 @@ module.exports = [
 				COMPLETED_AT: "completedAt",
 			}[orderBy];
 
-			query = query.orderBy(sortField, "asc");
+			query = query.orderBy(sortField, direction);
 			return h.response(await query).code(200);
 		},
 	},
